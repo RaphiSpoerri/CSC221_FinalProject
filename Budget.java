@@ -48,7 +48,7 @@ class Budget {
      * how the user's choice is handled is left to the implementing 
      * class.
      */
-    void promptToCreateOrUpdate() {}
+    void promptToCreateOrUpdate() { }
     /**
      * Prompts the user for the year number of the file to
      * delete.
@@ -56,7 +56,7 @@ class Budget {
      * how the user's choice is handled is left to the implementing 
      * class.
      */
-    void promptToDelete() {}
+    void promptToDelete() { }
     /**
      * Reads transaction data from a CSV file for a specific year.
      * @param year the year for which transactions are to be read
