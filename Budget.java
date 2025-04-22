@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+
 class Account {}
 /**
  * The {@code Budget} class will handle all budget related operations such as transactions, updating, creating, deleting, and reading in from CSV files
@@ -27,17 +29,17 @@ class Budget {
          * Returns the date the transaction took place, in the format MM/DD/YYYY.
          * @return the date of the transaction
          */
-        public String getDate() { }
+        public String getDate() { return null; }
         /**
          * Returns a string categorizing the transaction.
          * @return the transaction category
          */
-        public String getCategory() { }
+        public String getCategory() { return null;  }
         /**
          * Returns the net change (in cents) to the user's bank account, positive if money was added and negative if money was spent.
          * @return the net change
          */
-        public long getAmount() { }
+        public long getAmount() { return 0;  }
     }
     /**
      * Prompts the user for the year number for creating or 
@@ -54,18 +56,18 @@ class Budget {
      * how the user's choice is handled is left to the implementing 
      * class.
      */
-    void promptToDelete();
+    void promptToDelete() {}
     /**
      * Reads transaction data from a CSV file for a specific year.
      * @param year the year for which transactions are to be read
      * @return an ArrayList of Transaction objects for the given year
      */
-    ArrayList<Transaction> readCSV(int year);
+    ArrayList<Transaction> readCSV(int year) { return null; }
     /**
      * Retrieves a list of all years for which transaction data exists.
      * @return an ArrayList of Integer years
      */
-    ArrayList<Integer> getYears();
+    ArrayList<Integer> getYears() { return null; }
 }
 
 
