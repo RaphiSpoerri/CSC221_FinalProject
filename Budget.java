@@ -62,12 +62,12 @@ class Budget {
      * @param year the year for which transactions are to be read
      * @return an ArrayList of Transaction objects for the given year
      */
-    ArrayList<Transaction> readCSV(int year) { return null; }
+    ArrayList<Transaction> readCSV(String year) { return null; }
     /**
      * Retrieves a list of all years for which transaction data exists.
      * @return an ArrayList of Integer years
      */
-    ArrayList<Integer> getYears() { return null; }
+    ArrayList<String> getYears() { return null; }
 }
 
 
