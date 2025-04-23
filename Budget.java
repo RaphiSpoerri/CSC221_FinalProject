@@ -11,6 +11,7 @@ class Account {}
  *  @version %I%, %G%
  */
 class Budget {
+    private String userDataDir;
     /**
      * Constructs a Budget instance for a specific account
      * @params account is the account that will be associated with this budget instance. A valid account needs to be passed in order to create a budget instance.
@@ -65,7 +66,7 @@ class Budget {
     ArrayList<Transaction> readCSV(String year) { return null; }
     /**
      * Retrieves a list of all years for which transaction data exists.
-     * @return an ArrayList of Integer years
+     * @return an ArrayList of String years
      */
     ArrayList<String> getYears() { return null; }
 }
