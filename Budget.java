@@ -64,9 +64,6 @@ class Budget {
      */
     public void promptToCreateOrUpdate() { /* not implemented yet */ }
     /**
-     * 
-     * testing testing
-     * 
      * Prompts the user for the year number of the file to
      * delete.
      */
