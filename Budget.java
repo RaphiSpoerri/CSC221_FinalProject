@@ -1,7 +1,11 @@
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-class Account {}
+class Account {
+    String getUsername() { return ""; }
+}
 /**
  * The {@code Budget} class will handle all budget related operations such as transactions, updating, creating, deleting, and reading in from CSV files
  *  @author Shaeem Rockcliffe
@@ -12,11 +16,21 @@ class Account {}
  */
 class Budget {
     private String userDataDir;
+
     /**
      * Constructs a Budget instance for a specific account
      * @params account is the account that will be associated with this budget instance. A valid account needs to be passed in order to create a budget instance.
      */
-    Budget(Account account) { /* not implemented yet */ }
+    public Budget(Account account) throws IOException {
+        String dir = System.getProperty("user.dir");
+        userDataDir = dir + "/pfm_data/" + account.getUsername();
+        var file = new File(userDataDir);
+        if (!file.exists() && !file.mkdirs()) {
+            throw new IOException("failed to create directory for user "
+                + account.getUsername());
+        }
+    }
+
     /**
      * Represents one transaction, i.e. one row in the CSV file of transactions.
      * @author Shaeem Rockcliffe
@@ -26,7 +40,7 @@ class Budget {
      * @version %I%, %G%
      */
     public static class Transaction {
-        
+
         public Transaction(String date, String category, long amount) { /* not implemented yet */ }
         /**
          * Returns the date the transaction took place, in the format MM/DD/YYYY.
@@ -47,30 +61,24 @@ class Budget {
     /**
      * Prompts the user for the year number for creating or 
      * updating the user's file.
-     * The implementation of how the prompt is displayed and
-     * how the user's choice is handled is left to the implementing 
-     * class.
      */
-    void promptToCreateOrUpdate() { /* not implemented yet */ }
+    public void promptToCreateOrUpdate() { /* not implemented yet */ }
     /**
      * Prompts the user for the year number of the file to
      * delete.
-     * The implementation of how the prompt is displayed and
-     * how the user's choice is handled is left to the implementing 
-     * class.
      */
-    void promptToDelete() { /* not implemented yet */ }
+    public void promptToDelete() { /* not implemented yet */ }
     /**
      * Reads transaction data from a CSV file for a specific year.
      * @param year the year for which transactions are to be read
      * @return an ArrayList of Transaction objects for the given year
      */
-    ArrayList<Transaction> readCSV(String year) { /* not implemented yet */ return null; }
+    public ArrayList<Transaction> readCSV(String year) { /* not implemented yet */ return null; }
     /**
      * Retrieves a list of all years for which transaction data exists.
      * @return an ArrayList of String years
      */
-    ArrayList<String> getYears() { /* not implemented yet */ return null; }
+    public ArrayList<String> getYears() { /* not implemented yet */ return null; }
 }
 
 
