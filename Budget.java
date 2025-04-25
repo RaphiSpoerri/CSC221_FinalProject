@@ -15,14 +15,14 @@ class Account {
  *  @author John Ortega
  *  @version %I%, %G%
  */
-class draft {
+class Budget {
     private String userDataDir;
 
     /**
      * Constructs a Budget instance for a specific account
      * @params account is the account that will be associated with this budget instance. A valid account needs to be passed in order to create a budget instance.
      */
-    public draft(Account account) throws IOException {
+    public Budget(Account account) throws IOException {
         String dir = System.getProperty("user.dir");
         userDataDir = dir + "/pfm_data/" + account.getUsername();
         var file = new File(userDataDir);
