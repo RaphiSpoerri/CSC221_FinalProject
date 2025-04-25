@@ -2,6 +2,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 class Account {
     String getUsername() { return ""; }
@@ -14,14 +15,14 @@ class Account {
  *  @author John Ortega
  *  @version %I%, %G%
  */
-class Budget {
+class draft {
     private String userDataDir;
 
     /**
      * Constructs a Budget instance for a specific account
      * @params account is the account that will be associated with this budget instance. A valid account needs to be passed in order to create a budget instance.
      */
-    public Budget(Account account) throws IOException {
+    public draft(Account account) throws IOException {
         String dir = System.getProperty("user.dir");
         userDataDir = dir + "/pfm_data/" + account.getUsername();
         var file = new File(userDataDir);
@@ -40,23 +41,35 @@ class Budget {
      * @version %I%, %G%
      */
     public static class Transaction {
+    	
+    	private String date;
+        private String category;
+        private long amount;
 
-        public Transaction(String date, String category, long amount) { /* not implemented yet */ }
+        public Transaction(String date, String category, long amount) {
+        	this.date = date;
+        	this.category = category;
+        	this.amount = amount;
+        }
+        
         /**
          * Returns the date the transaction took place, in the format MM/DD/YYYY.
          * @return the date of the transaction
          */
-        public String getDate() { /* not implemented yet */ return null; }
+        public String getDate() { return date; }
+        
         /**
          * Returns a string categorizing the transaction.
          * @return the transaction category
          */
-        public String getCategory() { /* not implemented yet */ return null;  }
+        public String getCategory() { return category; }
+        
         /**
          * Returns the net change (in cents) to the user's bank account, positive if money was added and negative if money was spent.
          * @return the net change
          */
-        public long getAmount() { /* not implemented yet */ return 0;  }
+        public long getAmount() { return amount; }
+        
     }
     /**
      * Prompts the user for the year number for creating or 
@@ -67,7 +80,42 @@ class Budget {
      * Prompts the user for the year number of the file to
      * delete.
      */
-    public void promptToDelete() { /* not implemented yet */ }
+    void promptToDelete() {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<String> years = getYears();
+
+        if (years == null || years.isEmpty()) {
+            System.out.println("No transaction files available to delete.");
+            scanner.close();
+            return;
+        }
+
+        System.out.println("Available years:");
+        for (int i = 0; i < years.size(); i++) {
+            System.out.println((i + 1) + ". " + years.get(i));
+        }
+
+        System.out.print("Enter the corresponding number of the year you want to delete: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (choice < 1 || choice > years.size()) {
+            System.out.println("Invalid choice.");
+            scanner.close();
+            return;
+        }
+
+        String yearToDelete = years.get(choice - 1);
+        File fileToDelete = new File(userDataDir + "/transactions_" + yearToDelete + ".csv");
+
+        if (fileToDelete.exists() && fileToDelete.delete()) {
+            System.out.println("Successfully deleted: " + fileToDelete.getName());
+        } else {
+            System.out.println("Failed to delete: " + fileToDelete.getName());
+        }
+        
+        scanner.close();
+    }
     /**
      * 
      * Reads transaction data from a CSV file for a specific year.
@@ -81,6 +129,3 @@ class Budget {
      */
     public ArrayList<String> getYears() { /* not implemented yet */ return null; }
 }
-
-
-
