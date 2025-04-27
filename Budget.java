@@ -28,7 +28,7 @@ class Budget {
         userDataDir = dir + "/pfm_data/" + account.getUsername();
         var file = new File(userDataDir);
         if (!file.exists() && !file.mkdirs()) {
-            throw new IOException("failed to create directory for user "
+            throw new IOException("Failed to create directory for user "
                 + account.getUsername());
         }
     }
