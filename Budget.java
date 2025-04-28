@@ -77,7 +77,6 @@ class Budget {
      * updating the user's file.
      */
     public void promptToCreateOrUpdate() {
-        /* not implemented yet */ 
         Scanner userInput = new Scanner(System.in);
         ArrayList<String> years = getYears();
 
@@ -94,7 +93,7 @@ class Budget {
 
                         if (userYear >= 1000 && userYear <= 9999) {
 
-                            String filename = userYear + ".csv";
+                            String filename = userDataDir + "/" + userYear + ".csv";
 
                             try (FileWriter writer = new FileWriter(filename)) {
                                 System.out.println("Successfully created file: " + filename);
@@ -182,7 +181,7 @@ class Budget {
      * Prompts the user for the year number of the file to
      * delete.
      */
-    void promptToDelete() throws IOException{
+    void promptToDelete() throws IOException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter the year of the file you want to delete: ");
