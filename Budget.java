@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ class Budget {
      */
     public void promptToCreateOrUpdate() {
         Scanner userInput = new Scanner(System.in);
-        ArrayList<String> years = getYears();
+        ArrayList<Integer> years = getYears();
 
         while (true) {
             if (years == null) {
