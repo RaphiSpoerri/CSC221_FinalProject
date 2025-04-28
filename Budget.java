@@ -134,7 +134,7 @@ class Budget {
 
                         if (userYear >= 1000 && userYear <= 9999) {
 
-                            String filename = userYear + ".csv";
+                            String filename = userDataDir + "/" + userYear + ".csv";
 
                             try (FileWriter writer = new FileWriter(filename)) {
                                 System.out.println("Successfully created file: " + filename);
