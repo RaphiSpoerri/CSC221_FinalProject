@@ -145,7 +145,7 @@ class Budget {
      * @return list of transactions from the file
      * @throws IOException if the file cannot be read
      */
-    public ArrayList<Transaction> readCSV(int year) throws IOException {
+    public ArrayList<Transaction> readCSV(String year) throws IOException {
         ArrayList<Transaction> transactions = new ArrayList<>();
         String filename = userDataDir + "/" + year + ".csv";
         File file = new File(filename);
@@ -158,7 +158,7 @@ class Budget {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
                 if (line.isEmpty()) {
-                    continue; 
+                    continue;
                 }
                 String[] parts = line.split(",");
 
@@ -181,12 +181,12 @@ class Budget {
      * Returns a list of years (based on files present in the saved files directory).
      * @return list of years
      */
-    public ArrayList<Integer> getYears() {
-        ArrayList<Integer> years = new ArrayList<>();
+    public ArrayList<String> getYears() {
+        ArrayList<String> years = new ArrayList<>();
         File directory = new File(userDataDir);
 
         if (!directory.exists() || !directory.isDirectory()) {
-            return years; // Return empty list if null
+            return years;
         }
 
         File[] files = directory.listFiles();
@@ -196,16 +196,11 @@ class Budget {
 
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".csv")) {
-                String filename = file.getName().replace(".csv", "");
-                try {
-                    int year = Integer.parseInt(filename);
-                    years.add(year);
-                } catch (NumberFormatException e) {
-                    // Ignore files that are not valid years
-                }
+                String filename = file.getName();
+                String year = filename.replace(".csv", "");
+                years.add(year);
             }
         }
-
         return years;
     }
 }
