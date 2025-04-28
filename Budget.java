@@ -182,40 +182,20 @@ class Budget {
      * Prompts the user for the year number of the file to
      * delete.
      */
-    void promptToDelete() {
+    void promptToDelete() throws IOException{
         Scanner scanner = new Scanner(System.in);
-        ArrayList<String> years = getYears();
 
-        if (years == null || years.isEmpty()) {
-            System.out.println("No transaction files available to delete.");
-            scanner.close();
-            return;
-        }
+        System.out.print("Enter the year of the file you want to delete: ");
+        String year = scanner.nextLine();
 
-        System.out.println("Available years:");
-        for (int i = 0; i < years.size(); i++) {
-            System.out.println((i + 1) + ". " + years.get(i));
-        }
-
-        System.out.print("Enter the corresponding number of the year you want to delete: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (choice < 1 || choice > years.size()) {
-            System.out.println("Invalid choice.");
-            scanner.close();
-            return;
-        }
-
-        String yearToDelete = years.get(choice - 1);
-        File fileToDelete = new File(userDataDir + "/transactions_" + yearToDelete + ".csv");
+        File fileToDelete = new File(userDataDir + "/" + year + ".csv");
 
         if (fileToDelete.exists() && fileToDelete.delete()) {
             System.out.println("Successfully deleted: " + fileToDelete.getName());
         } else {
             System.out.println("Failed to delete: " + fileToDelete.getName());
         }
-        
+
         scanner.close();
     }
     /**
