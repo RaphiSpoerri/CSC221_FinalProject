@@ -77,105 +77,46 @@ class Budget {
      * Prompts the user for the year number for creating or 
      * updating the user's file.
      */
-    public void promptToCreateOrUpdate() {
+    public void promptToCreateOrUpdate() throws IOException{
+        /* not implemented yet */ 
         Scanner userInput = new Scanner(System.in);
-        ArrayList<Integer> years = getYears();
 
-        while (true) {
-            if (years == null) {
-                System.out.println("No existing data found. Would you like to create a new file? (yes/no)");
-                String response = userInput.next();
+        System.out.println("Enter the year: ");
+        int userYear = userInput.nextInt();
+        userInput.nextLine();
 
-                if (response.toLowerCase().equals("yes")) {
-                    System.out.println("Enter the year for the new file: ");
+        if (userYear < 1000 || userYear > 9999){
+            System.out.println("Invalid year. Please provide a valid year.\n");
+            userInput.close();
+            return;
+        }
 
-                    while (true) {
-                        int userYear = userInput.nextInt();
+        String filename = userDataDir + "/" + userYear + ".csv";
+        File savedFile = new File(filename);
 
-                        if (userYear >= 1000 && userYear <= 9999) {
+        if (savedFile.exists()){
+            System.out.println("CSV data for year + " + userYear + " already exists. Overwrite it (y/n): ");
+            String userResponse = userInput.next();
 
-                            String filename = userDataDir + "/" + userYear + ".csv";
-
-                            try (FileWriter writer = new FileWriter(filename)) {
-                                System.out.println("Successfully created file: " + filename);
-
-                                /* inserting initial data not implemented yet */
-
-                            } 
-                            catch (IOException e) {
-                                e.printStackTrace(); /* testing purposes */
-                            }
-                            break; 
-                        } 
-                        else {
-                            System.out.println("Invalid input. Please enter a valid year between 1000 and 9999:");
-                        }
-                    }
-                    break; 
-
-                } 
-                else if (response.toLowerCase().equals("no")) {
-                    System.out.println("Exiting process...");
-                    break; 
-                } 
-                else {
-                    System.out.println("Invalid input. Please enter 'yes' or 'no'.");
-                    // No break here, restart the outer loop
-                }
-            } 
-            else{
-                System.out.println("Would you like to create or update a file? (create/update)");
-                String response = userInput.next();
-
-                if (response.toLowerCase().equals("yes")) {
-                    System.out.println("Enter the year for the new file: ");
-
-                    while (true) {
-                        int userYear = userInput.nextInt();
-
-                        if (userYear >= 1000 && userYear <= 9999) {
-
-                            String filename = userDataDir + "/" + userYear + ".csv";
-
-                            try (FileWriter writer = new FileWriter(filename)) {
-                                System.out.println("Successfully created file: " + filename);
-
-                                /* inserting initial data not implemented yet */
-
-                            } 
-                            catch (IOException e) {
-                                e.printStackTrace(); /* testing purposes */
-                            }
-                            break; 
-                        } 
-                        else {
-                            System.out.println("Invalid input. Please enter a valid year between 1000 and 9999:");
-                        }
-                    }
-                    break; 
-
-                }  
-                if(response.toLowerCase().equals("update")){
-
-                /*Waiting for the readCSV and getYears to be implemented, to implement */
-
-                // print out the years
-
-                // ask for which year
-                System.out.println("Enter the year to update: ");
-                int updateYear = userInput.nextInt();
-
-                // print out that years transactions
-                // delete, or update a specific transaction
-                // keep looping til user content
-                break;
-                } 
-                else {
-                    System.out.println("Invalid input. Please enter 'create' or 'update'.");
-                    // No break here, restart the outer loop
-                }
+            if (userResponse.toLowerCase().equals("n")){
+                System.out.println("No changes have been made.");
+                userInput.close();
+                return;
             }
         }
+
+        if(!savedFile.exists()){
+            savedFile.createNewFile();
+        }
+
+        try(FileWriter fileWriter = new FileWriter(savedFile)){
+            fileWriter.write("Date, Category, Amount\n");
+            System.out.println("File created/updated successfully: " + savedFile.getName());
+        } 
+        catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+
         userInput.close();
     }
     /**
