@@ -48,7 +48,7 @@ public class Budget {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
                 if (line.isEmpty()) {
-                    continue; // Skip empty lines
+                    continue; 
                 }
                 String[] parts = line.split(",");
 
@@ -76,7 +76,7 @@ public class Budget {
         File directory = new File(userDataDir);
 
         if (!directory.exists() || !directory.isDirectory()) {
-            return years; // Return empty list if not found
+            return years; // Return empty list if null
         }
 
         File[] files = directory.listFiles();
