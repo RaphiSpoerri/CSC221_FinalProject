@@ -1,10 +1,9 @@
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Budget {
-    private static final String FILE_DIRECTORY = "saved_files"; 
+    private static final String userDataDir = "saved_files"; 
 
     public static class Transaction {
         private String date;
@@ -38,7 +37,7 @@ public class Budget {
      */
     public ArrayList<Transaction> readCSV(int year) throws IOException {
         ArrayList<Transaction> transactions = new ArrayList<>();
-        String filename = FILE_DIRECTORY + "/" + year + ".csv";
+        String filename = userDataDir + "/" + year + ".csv";
         File file = new File(filename);
 
         if (!file.exists()) {
@@ -47,7 +46,10 @@ public class Budget {
 
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+                String line = scanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    continue; // Skip empty lines
+                }
                 String[] parts = line.split(",");
 
                 if (parts.length != 3) {
@@ -66,15 +68,15 @@ public class Budget {
     }
 
     /**
-     * Returns a list of years (based on files present in the save directory).
+     * Returns a list of years (based on files present in the saved files directory).
      * @return list of years
      */
-    public ArrayList<String> getYears() {
-        ArrayList<String> years = new ArrayList<>();
-        File directory = new File(FILE_DIRECTORY);
+    public ArrayList<Integer> getYears() {
+        ArrayList<Integer> years = new ArrayList<>();
+        File directory = new File(userDataDir);
 
         if (!directory.exists() || !directory.isDirectory()) {
-            return years; // return empty if null
+            return years; // Return empty list if not found
         }
 
         File[] files = directory.listFiles();
@@ -84,14 +86,16 @@ public class Budget {
 
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".csv")) {
-                String filename = file.getName();
-                String year = filename.replace(".csv", "");
-                years.add(year);
+                String filename = file.getName().replace(".csv", "");
+                try {
+                    int year = Integer.parseInt(filename);
+                    years.add(year);
+                } catch (NumberFormatException e) {
+                    // Ignore files that are not valid years
+                }
             }
         }
 
         return years;
     }
 }
-// fix any mistakes of the plane before 28th
-
