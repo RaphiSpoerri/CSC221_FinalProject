@@ -165,7 +165,7 @@ public class Budget {
         }
     }
     /**
-     * Prompts the user for`` the year number of the file to
+     * Prompts the user for the year number of the file to
      * delete.
      */
     void promptToDelete() throws IOException {
