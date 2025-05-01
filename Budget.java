@@ -252,4 +252,27 @@ public class Budget {
 
         return years;
     }
+
+    private void panic(String msg, Object ...args) {
+        System.err.println("Fatal error: " + String.format(msg, args));
+        System.exit(1);
+    }
+
+    private void verifyUserDataDir() {
+        var file = new File(userDataDir);
+        if (!file.exists()) {
+            panic("Internal storage is corrupt: Directory %s is missing.", userDataDir);
+        }
+        if (!file.isDirectory()) {
+            panic("Internal storage is corrupt: %s is not a directory.", userDataDir);
+        }
+    }
+
+    private void promptEnsuringInput(String prompt, Scanner scanner) {
+        System.out.print(prompt);
+
+        if (!scanner.hasNext()) {
+            panic("Unexpected end of the input, exiting.");
+        }
+    }
 }
