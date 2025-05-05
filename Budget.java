@@ -2,12 +2,14 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+// remove this line if it doesn't compile
+import pfm.ValidationManager;
 
 class Account {
     String getUsername() {
@@ -42,7 +44,7 @@ public class Budget {
                         System.out.print("year #: ");
                         for (var tr : b.readCSV(sc.nextInt()))
                             System.out.printf(
-                                "%s,%s,%s\n", tr.getDate(), tr.getAmount(), tr.getDate());
+                                "%s,%s\n", tr.getAmount(), tr.getCategory());
                         break;
                     case 'd': b.promptToDelete(); break;
                     case 'u': b.promptToCreateOrUpdate(); break;
@@ -131,8 +133,8 @@ public class Budget {
             }
     
             // Prompt the user to overwrite if the file exists
-            String userResponse = promptEnsuringInput("CSV data for year already exists. Overwrite it (y/n): ", userInput);
-    
+            promptEnsuringInput("CSV data for year already exists. Overwrite it (y/n): ", userInput);
+            String userResponse = userInput.nextLine();
             if (!userResponse.equalsIgnoreCase("y") && !userResponse.equalsIgnoreCase("yes")) {
                 System.out.println("No changes have been made.");
                 return;
