@@ -94,7 +94,8 @@ public class Budget {
             System.err.println("Cannot find file " + file);
             return;
         } else if (fptr.isDirectory()) {
-            System.err.println("Cannot read a directory as a CSV file");
+            System.err.println("Cannot read a directory as a CSV file.");
+            return;
         }
 
         int userYear = Integer.parseInt(basename.substring(0, 4)); // should never throw
