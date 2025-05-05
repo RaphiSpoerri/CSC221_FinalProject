@@ -69,54 +69,6 @@ public class Budget {
         }
     }
 
-    /**
-     * Represents one transaction, i.e. one row in the CSV file of transactions.
-     * @author Shaeem Rockcliffe
-     * @author Raphael Spoerri
-     * @author Giovanni Carrion
-     * @author John Ortega
-     * @version %I%, %G%
-     */
-    public static class Transaction {
-        private String date;
-        private String category;
-        private long amount;
-
-        public Transaction(String date, String category, long amount) {
-            this.date = date;
-            this.category = category;
-            this.amount = amount;
-        }
-
-        /**
-         * Returns the date the transaction took place, in the format MM/DD/YYYY.
-         * @return the date of the transaction
-         */
-        public String getDate() {
-            return date;
-        }
-
-        /**
-         * Returns a string categorizing the transaction.
-         * @return the transaction category
-         */
-        public String getCategory() {
-            return category;
-        }
-
-        /**
-         * Returns the net change (in cents) to the user's bank account, positive if
-         * money was added and negative if money was spent.
-         * @return the net change
-         */
-        public long getAmount() {
-            return amount;
-        }
-    }
-    /**
-     * Prompts the user for the year number for creating or
-     * updating the user's file.
-     */
     public void promptToCreateOrUpdate() throws IOException {
         /* not implemented yet */
         Scanner userInput = new Scanner(System.in);
@@ -169,19 +121,42 @@ public class Budget {
      * delete.
      */
     void promptToDelete() throws IOException {
+        verifyUserDataDir();  // Ensures directory exists and is valid
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter the year of the file you want to delete: ");
-        String year = scanner.nextLine();
-
-        File fileToDelete = new File(userDataDir + "/" + year + ".csv");
-
-        if (fileToDelete.exists() && fileToDelete.delete()) {
-            System.out.println("Successfully deleted: " + fileToDelete.getName());
-        } else {
-            System.out.println("Failed to delete: " + fileToDelete.getName());
+        
+        promptEnsuringInput("Enter the year of the file you want to delete: ", scanner);
+        
+        if (!scanner.hasNextInt()) {
+            System.err.println("Error: Year must be an integer.");
+            return;
         }
+        
+        int year = scanner.nextInt();
+        
+        if (year < 1000 || year > 9999) {
+            System.err.println("Error: Year must be a 4-digit number.");
+            return;
+        }
+    
+        File fileToDelete = new File(userDataDir + "/" + year + ".csv");
+    
+        if (!fileToDelete.exists()) {
+            System.err.println("Error: File does not exist for year " + year + ".");
+            return;
+        }
+    
+        if (fileToDelete.isDirectory()) {
+            System.err.println("Error: Expected a file, but found a directory.");
+            return;
+        }
+    
+        if (!fileToDelete.delete()) {
+            throw new IOException("Failed to delete file " + fileToDelete.getAbsolutePath());
+        }
+    
+        System.out.println("Successfully deleted: " + fileToDelete.getName());
     }
+    
     /**
      * Reads a CSV file for a given year and returns a list of transactions.
      * @param year the year to read
