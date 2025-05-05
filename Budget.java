@@ -204,34 +204,52 @@ public class Budget {
      * @throws IOException if the file cannot be read
      */
     public ArrayList<Transaction> readCSV(int year) throws IOException {
-        ArrayList<Transaction> transactions = new ArrayList<>();
+        verifyUserDataDir(); 
+    
         String filename = userDataDir + "/" + year + ".csv";
         File file = new File(filename);
-
+    
         if (!file.exists()) {
-            throw new FileNotFoundException("File not found: " + filename);
+            System.err.println("Error: File not found: " + filename);
+            return null;
         }
-
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
-                if (line.isEmpty()) {
+    
+        if (file.isDirectory()) {
+            System.err.println("Error: Expected a file but found a directory: " + filename);
+            return null;
+        }
+    
+        if (!ValidationManager.CheckCSVContent.validateWholeCSVFile(year, filename)) {
+            Scanner scanner = new Scanner(System.in);
+            promptEnsuringInput("CSV file failed validation. Continue anyway (y/n)? ", scanner);
+            String response = scanner.next().trim().toLowerCase();
+            if (!(response.equals("y") || response.equals("yes"))) {
+                return null;
+            }
+        }
+    
+        ArrayList<Transaction> transactions = new ArrayList<>();
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+    
+                if (!ValidationManager.CheckCSVContent.validateLine(year, line)) {
+                    System.err.println("Skipping invalid line: " + line);
                     continue;
                 }
+    
                 String[] parts = line.split(",");
-
-                if (parts.length != 3) {
-                    System.out.println("Skipping invalid line: " + line);
-                    continue;
-                }
-
                 String date = parts[0].trim();
                 String category = parts[1].trim();
                 long amount = Long.parseLong(parts[2].trim());
-
+    
                 transactions.add(new Transaction(date, category, amount));
             }
         }
+    
         return transactions;
     }
 
@@ -241,30 +259,31 @@ public class Budget {
      * @return list of years
      */
     public ArrayList<Integer> getYears() {
+        verifyUserDataDir(); 
+    
         ArrayList<Integer> years = new ArrayList<>();
         File directory = new File(userDataDir);
-
-        if (!directory.exists() || !directory.isDirectory()) {
-            return years; // Return empty list if null
-        }
-
+    
         File[] files = directory.listFiles();
         if (files == null) {
-            return years;
+            System.err.println("Failed to fetch user data files");
+            return null;
         }
-
+    
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".csv")) {
                 String filename = file.getName().replace(".csv", "");
                 try {
                     int year = Integer.parseInt(filename);
-                    years.add(year);
+                    if (year >= 1000 && year <= 9999) {
+                        years.add(year);
+                    }
                 } catch (NumberFormatException e) {
-                    // Ignore files that are not valid years
+                    // Ignore invalid filenames
                 }
             }
         }
-
+    
         return years;
     }
 
