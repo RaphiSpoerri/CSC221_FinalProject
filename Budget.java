@@ -78,13 +78,30 @@ public class Budget {
         Scanner userInput = new Scanner(System.in);
     
         promptEnsuringInput("Enter the year of the file you want to create/update: ", userInput);
-        int userYear = userInput.nextInt();
-        userInput.nextLine();
-    
+        String file = userInput.nextLine();
+        if (file.length() < 8) {
+            System.err.println("Invalid CSV file. Must be YYYY.csv");
+            return;
+        }
+        String basename = file.substring(file.length() - 8);
+
+        if (!basename.matches("^[1-9]\\d{3}\\.csv$")) {
+            System.err.println("Invalid CSV file. Must be YYYY.csv, 1000 <= YYYY <= 9999");
+            return;
+        }
+        var fptr = new File(file);
+        if (!fptr.exists()) {
+            System.err.println("Cannot find file " + file);
+            return;
+        } else if (fptr.isDirectory()) {
+            System.err.println("Cannot read a directory as a CSV file");
+        }
+
+        int userYear = Integer.parseInt(basename.substring(0, 4)); // should never throw
+
         // Validate the year input
         if (userYear < 1000 || userYear > 9999) {
             System.out.println("Invalid year. Please provide a valid year.\n");
-            userInput.close();
             return;
         }
     
@@ -92,12 +109,6 @@ public class Budget {
     
         String filename = userDataDir + "/" + userYear + ".csv";
         File savedFile = new File(filename);
-    
-        // Check file name format
-        if (!savedFile.getName().matches("^[0-9]{4}\\.csv$")) {
-            System.err.println("Error: The file name must match the pattern YYYY.csv.");
-            return;
-        }
     
         // Check if the file exists, if not, create it
         if (!savedFile.exists()) {
@@ -120,7 +131,7 @@ public class Budget {
             }
     
             // Validate the file content using the validation manager
-            boolean isValid = ValidationManager.CheckCSVContent.validateWholeCSVFile(userYear, filename);
+            boolean isValid = ValidationManager.CheckCSVContent.validateWholeCSVFile(userYear, file);
             
             // If invalid, prompt the user
             if (!isValid) {
@@ -142,7 +153,7 @@ public class Budget {
         }
     
         // Proceed with copying the file content
-        try (BufferedReader fileReader = new BufferedReader(new FileReader(savedFile));
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(file));
              BufferedWriter fileWriter = new BufferedWriter(new FileWriter(savedFile))) {
     
             String line;
