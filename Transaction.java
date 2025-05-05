@@ -12,7 +12,13 @@ public class Transaction {
     private int year;
     private String category;
     private long amount;
-
+    
+    /**
+     * Constructs a {@code Transaction} object, assuming the date and category are valid
+     * @param date the date of the transaction in the format MM/DD/YYYY
+     * @param category
+     * @param amount the amount in dollars
+     */
     public Transaction(String date, String category, long amount) {
         String[] parts = date.split("/");
         if (parts.length != 3) {
@@ -26,8 +32,7 @@ public class Transaction {
         this.category = category;
         this.amount = amount;
     }
-
-    public int getMonth() {return month; }
+    public int getMonth() { return month; }
     public int getDay() { return day; }
     public int getYear() { return year; }
     public String getCategory() { return category; }
