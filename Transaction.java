@@ -27,9 +27,12 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public int getMonth() {return month;}
+    public int getMonth() {return month; }
     public int getDay() { return day; }
     public int getYear() { return year; }
     public String getCategory() { return category; }
+    /**
+     * Returns the net change in dollars
+     */
     public long getAmount() { return amount; }
 }
