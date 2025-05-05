@@ -64,6 +64,7 @@ public class Budget {
      * @params account is the account that will be associated with this budget
      * instance. A valid account needs to be passed in order to create a budget
      * instance.
+     * @throws IOException if the user data directory does not exist and could not be created
      */
     public Budget(Account account) throws IOException {
         String dir = System.getProperty("user.dir");
@@ -74,7 +75,13 @@ public class Budget {
         }
     }
 
-    public void promptToCreateOrUpdate() throws IOException {
+    /**
+     * Prompts the user for the path to the file to save. If the file already exists,
+     * prompts to confirm overwriting it.<br>
+     * Upon expected failures (file does not exist, invalid name, etc.)
+     * prints error and returns. Prints error and exits if unexpected I/O error occurs. 
+     */
+    public void promptToCreateOrUpdate() {
         Scanner userInput = new Scanner(System.in);
     
         promptEnsuringInput("Enter the year of the file you want to create/update: ", userInput);
@@ -165,14 +172,15 @@ public class Budget {
     
             System.out.println("File created/updated successfully: " + savedFile.getName());
         } catch (IOException e) {
-            System.err.println("Error reading or writing to file: " + e.getMessage());
+            panic("Unexpected I/O error when saving file: %s.", e.getMessage());
         }
     }
     /**
      * Prompts the user for the year number of the file to
-     * delete.
+     * delete. Upon expected failures (file does not exist, invalid name, etc.)
+     * prints error and returns. Prints error and exits if unexpected I/O error occurs. 
      */
-    void promptToDelete() throws IOException {
+    void promptToDelete() {
         verifyUserDataDir();  // Ensures directory exists and is valid
         Scanner scanner = new Scanner(System.in);
         
@@ -203,7 +211,8 @@ public class Budget {
         }
     
         if (!fileToDelete.delete()) {
-            throw new IOException("Failed to delete file " + fileToDelete.getAbsolutePath());
+            System.err.println("Failed to delete file " + fileToDelete.getAbsolutePath());
+            return;
         }
     
         System.out.println("Successfully deleted: " + fileToDelete.getName());
@@ -212,10 +221,10 @@ public class Budget {
     /**
      * Reads a CSV file for a given year and returns a list of transactions.
      * @param year the year to read
-     * @return list of transactions from the file
-     * @throws IOException if the file cannot be read
+     * @return list of transactions from the file, or null if the file for that year is missing,
+     * wrong type, or contains invalid data.
      */
-    public ArrayList<Transaction> readCSV(int year) throws IOException {
+    public ArrayList<Transaction> readCSV(int year) {
         verifyUserDataDir(); 
     
         String filename = userDataDir + "/" + year + ".csv";
@@ -260,6 +269,9 @@ public class Budget {
     
                 transactions.add(new Transaction(date, category, amount));
             }
+        } catch (IOException e) {
+            panic("Failed to read file '%s': %s", filename, e.getMessage());
+            // unreachable
         }
     
         return transactions;
@@ -268,7 +280,7 @@ public class Budget {
     /**
      * Returns a list of years (based on files present in the saved files
      * directory).
-     * @return list of years
+     * @return list of years, or null upon failure
      */
     public ArrayList<Integer> getYears() {
         verifyUserDataDir(); 
@@ -303,7 +315,10 @@ public class Budget {
         System.err.println("Fatal error: " + String.format(msg, args));
         System.exit(1);
     }
-
+    /**
+     * Whenever accessing the directory {@code userDataDir}, call this method first
+     * to ensure the directory is valid.
+     */
     private void verifyUserDataDir() {
         var file = new File(userDataDir);
         if (!file.exists()) {
@@ -314,6 +329,12 @@ public class Budget {
         }
     }
 
+    /**
+     * Prints a prompt string to the standard output, and ensures there's input left.
+     * Note: this method does not read in any input.
+     * @param prompt the message to display
+     * @param scanner the scanner to use
+     */
     private void promptEnsuringInput(String prompt, Scanner scanner) {
         System.out.print(prompt);
 
