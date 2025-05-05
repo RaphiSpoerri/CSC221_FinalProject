@@ -122,8 +122,8 @@ public class Budget {
             
             // If invalid, prompt the user
             if (!isValid) {
-                String userResponse = promptEnsuringInput("The CSV file contains invalid records. Continue anyway? (y/n): ", userInput);
-                
+                promptEnsuringInput("The CSV file contains invalid records. Continue anyway? (y/n): ", userInput);
+                String userResponse = userInput.nextLine();
                 if (!userResponse.equalsIgnoreCase("y") && !userResponse.equalsIgnoreCase("yes")) {
                     System.out.println("No changes have been made.");
                     return;
@@ -153,8 +153,6 @@ public class Budget {
         } catch (IOException e) {
             System.err.println("Error reading or writing to file: " + e.getMessage());
         }
-    
-        userInput.close();
     }
     /**
      * Prompts the user for the year number of the file to
