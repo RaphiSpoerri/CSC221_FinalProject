@@ -1,6 +1,9 @@
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -70,51 +73,88 @@ public class Budget {
     }
 
     public void promptToCreateOrUpdate() throws IOException {
-        /* not implemented yet */
         Scanner userInput = new Scanner(System.in);
-
-        System.out.print("Enter the year: ");
+    
+        promptEnsuringInput("Enter the year of the file you want to create/update: ", userInput);
         int userYear = userInput.nextInt();
         userInput.nextLine();
-
+    
+        // Validate the year input
         if (userYear < 1000 || userYear > 9999) {
             System.out.println("Invalid year. Please provide a valid year.\n");
+            userInput.close();
             return;
         }
-
+    
+        verifyUserDataDir();
+    
         String filename = userDataDir + "/" + userYear + ".csv";
         File savedFile = new File(filename);
-
-        if (savedFile.exists()) {
-            System.out.print(
-                "CSV data for year + " + userYear + " already exists. Overwrite it (y/n): ");
-            String userResponse = userInput.next();
-
-            if (userResponse.toLowerCase().equals("n")) {
+    
+        // Check file name format
+        if (!savedFile.getName().matches("^[0-9]{4}\\.csv$")) {
+            System.err.println("Error: The file name must match the pattern YYYY.csv.");
+            return;
+        }
+    
+        // Check if the file exists, if not, create it
+        if (!savedFile.exists()) {
+            try {
+                if (savedFile.createNewFile()) {
+                    System.out.println("File created: " + savedFile.getName());
+                } else {
+                    System.err.println("Error: Could not create the file.");
+                    return;
+                }
+            } catch (IOException e) {
+                System.err.println("Error creating file: " + e.getMessage());
+                return;
+            }
+        } else {
+            // If the file exists, check if it's a directory
+            if (savedFile.isDirectory()) {
+                System.err.println("Error: A directory with this name already exists.");
+                return;
+            }
+    
+            // Validate the file content using the validation manager
+            boolean isValid = ValidationManager.CheckCSVContent.validateWholeCSVFile(userYear, filename);
+            
+            // If invalid, prompt the user
+            if (!isValid) {
+                String userResponse = promptEnsuringInput("The CSV file contains invalid records. Continue anyway? (y/n): ", userInput);
+                
+                if (!userResponse.equalsIgnoreCase("y") && !userResponse.equalsIgnoreCase("yes")) {
+                    System.out.println("No changes have been made.");
+                    return;
+                }
+            }
+    
+            // Prompt the user to overwrite if the file exists
+            String userResponse = promptEnsuringInput("CSV data for year already exists. Overwrite it (y/n): ", userInput);
+    
+            if (!userResponse.equalsIgnoreCase("y") && !userResponse.equalsIgnoreCase("yes")) {
                 System.out.println("No changes have been made.");
                 return;
             }
         }
-
-        if (!savedFile.exists()) {
-            savedFile.createNewFile();
-        }
-        String content = "";
-
-        try (var fileReader = new Scanner(new File(userYear + ".csv"))) {
-            while (fileReader.hasNextLine()) {
-                content += fileReader.nextLine() + "\n";
+    
+        // Proceed with copying the file content
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(savedFile));
+             BufferedWriter fileWriter = new BufferedWriter(new FileWriter(savedFile))) {
+    
+            String line;
+            while ((line = fileReader.readLine()) != null) {
+                fileWriter.write(line);
+                fileWriter.newLine();
             }
-        } catch (IOException e) {
-            System.err.println("Error reading from file: " + e.getMessage());
-        }
-
-        try (FileWriter fileWriter = new FileWriter(savedFile)) {
-            fileWriter.write(content);
+    
             System.out.println("File created/updated successfully: " + savedFile.getName());
         } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
+            System.err.println("Error reading or writing to file: " + e.getMessage());
         }
+    
+        userInput.close();
     }
     /**
      * Prompts the user for the year number of the file to
