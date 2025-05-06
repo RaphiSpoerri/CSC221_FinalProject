@@ -26,7 +26,10 @@ class Account {
  *  @version %I%, %G%
  */
 public class Budget {
-    // for testing:
+    /**
+     * Just for testing.
+     * @param args - arguments to program. Ignored
+     */
     public static void main(String[] args) {
         try {
             var me = new Account();
@@ -42,7 +45,12 @@ public class Budget {
                         break;
                     case 'r':
                         System.out.print("year #: ");
-                        for (var tr : b.readCSV(sc.nextInt()))
+                        var csv = b.readCSV(sc.nextInt());
+                        if (csv == null) {
+                            System.err.println("Invalid CSV file.");
+                            break;
+                        }
+                        for (var tr : csv)
                             System.out.printf(
                                 "%s,%s\n", tr.getAmount(), tr.getCategory());
                         break;
@@ -61,7 +69,7 @@ public class Budget {
 
     /**
      * Constructs a Budget instance for a specific account
-     * @params account is the account that will be associated with this budget
+     * @param account is the account that will be associated with this budget
      * instance. A valid account needs to be passed in order to create a budget
      * instance.
      * @throws IOException if the user data directory does not exist and could not be created
@@ -219,10 +227,10 @@ public class Budget {
     }
     
     /**
-     * Reads a CSV file for a given year and returns a list of transactions.
-     * @param year the year to read
-     * @return list of transactions from the file, or null if the file for that year is missing,
-     * wrong type, or contains invalid data.
+     * Reads a CSV file for a given year and returns a list of transactions, or null if
+     * the file for that year is missing, has the wrong type, or contains invalid data.
+     * @param year the year to read.
+     * @return list of transactions from the file, or null.
      */
     public ArrayList<Transaction> readCSV(int year) {
         verifyUserDataDir(); 
@@ -279,8 +287,8 @@ public class Budget {
 
     /**
      * Returns a list of years (based on files present in the saved files
-     * directory).
-     * @return list of years, or null upon failure
+     * directory), or null upon failure to read the data directory.
+     * @return list of years, or null
      */
     public ArrayList<Integer> getYears() {
         verifyUserDataDir(); 
