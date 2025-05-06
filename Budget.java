@@ -72,14 +72,13 @@ public class Budget {
      * @param account is the account that will be associated with this budget
      * instance. A valid account needs to be passed in order to create a budget
      * instance.
-     * @throws IOException if the user data directory does not exist and could not be created
      */
-    public Budget(Account account) throws IOException {
+    public Budget(Account account) {
         String dir = System.getProperty("user.dir");
         userDataDir = dir + "/pfm_data/" + account.getUsername();
         var file = new File(userDataDir);
         if (!file.exists() && !file.mkdirs()) {
-            throw new IOException("Failed to create directory for user " + account.getUsername());
+            panic("Failed to create directory for user %s.", account.getUsername());
         }
     }
 
