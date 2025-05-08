@@ -8,14 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// remove this line if it doesn't compile
 import pfm.ValidationManager;
+import pfm.Account;
 
-class Account {
-    String getUsername() {
-        return "";
-    }
-}
 /**
  * The {@code Budget} class will handle all budget related operations such as
  * transactions, updating, creating, deleting, and reading in from CSV files
@@ -31,28 +26,29 @@ public class Budget {
      * @param args - arguments to program. Ignored
      */
     public static void main(String[] args) {
+        var scanner = new Scanner(System.in);
         try {
             var me = new Account();
             var b = new Budget(me);
-            var sc = new Scanner(System.in);
             String cmd;
             while (true) {
                 System.out.print("enter a command ([l]ist/[r]ead/[u]pdate/[d]elete/[q]uit)\n>>> ");
-                cmd = sc.next();
+                if (!scanner.hasNextLine()) break;
+
+                cmd = scanner.next();
                 switch (cmd.charAt(0)) {
                     case 'l':
                         for (var year : b.getYears()) System.out.println(year);
                         break;
                     case 'r':
-                        System.out.print("year #: ");
-                        var csv = b.readCSV(sc.nextInt());
+                        System.out.print("Year number: ");
+                        var csv = b.readCSV(scanner.nextInt());
                         if (csv == null) {
                             System.err.println("Invalid CSV file.");
                             break;
                         }
                         for (var tr : csv)
-                            System.out.printf(
-                                "%s,%s\n", tr.getAmount(), tr.getCategory());
+                            System.out.println(tr);
                         break;
                     case 'd': b.promptToDelete(); break;
                     case 'u': b.promptToCreateOrUpdate(); break;
@@ -63,6 +59,8 @@ public class Budget {
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            scanner.close();
         }
     }
     private String userDataDir;
@@ -91,7 +89,7 @@ public class Budget {
     public void promptToCreateOrUpdate() {
         Scanner userInput = new Scanner(System.in);
     
-        promptEnsuringInput("Enter the year of the file you want to create/update: ", userInput);
+        promptEnsuringInput("CSV file: ", userInput);
         String file = userInput.nextLine();
         if (file.length() < 8) {
             System.err.println("Invalid CSV file. Must be YYYY.csv");
@@ -191,7 +189,7 @@ public class Budget {
         verifyUserDataDir();  // Ensures directory exists and is valid
         Scanner scanner = new Scanner(System.in);
         
-        promptEnsuringInput("Enter the year of the file you want to delete: ", scanner);
+        promptEnsuringInput("Year number: ", scanner);
         
         if (!scanner.hasNextInt()) {
             System.err.println("Error: Year must be an integer.");
