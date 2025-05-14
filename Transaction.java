@@ -1,6 +1,6 @@
 /**
  * Represents one transaction, i.e. one row in the CSV file of transactions.
- * @author Shaeem Rockcliffe
+ * @author John Ortega
  * @version %I%, %G%
  */
 public class Transaction {
